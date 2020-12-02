@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         btn_set_once_alarm.setOnClickListener(this)
         btn_repeating_time.setOnClickListener(this)
         btn_set_repeating_alarm.setOnClickListener(this)
+        btn_cancel_repeating_alarm.setOnClickListener(this)
 
         alarmReceiver = AlarmReceiver()
     }
@@ -62,6 +63,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
                 val repeatMessage = edt_repeating_message.text.toString()
                 alarmReceiver.setRepeatingAlarm(this, repeatTime, repeatMessage)
             }
+            R.id.btn_cancel_repeating_alarm -> alarmReceiver.cancelAlarm(this, AlarmReceiver.TYPE_REPEATING)
         }
     }
 

@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class AlarmReceiver : BroadcastReceiver() {
+
     companion object {
         const val TYPE_ONE_TIME = "OneTimeAlarm"
         const val TYPE_REPEATING = "RepeatingAlarm"
@@ -83,17 +84,6 @@ class AlarmReceiver : BroadcastReceiver() {
         Toast.makeText(context, "One time alarm set up", Toast.LENGTH_SHORT).show()
     }
 
-    private fun isDateInvalid(date: String, format: String): Boolean {
-        return try {
-            val df = SimpleDateFormat(format, Locale.getDefault())
-            df.isLenient = false
-            df.parse(date)
-            false
-        } catch (e: ParseException) {
-            true
-        }
-    }
-
     @SuppressLint("ServiceCast")
     private fun showAlarmNotification(context: Context, title: String, message: String, notifId: Int) {
         val CHANNEL_ID = "Channel_1"
@@ -139,6 +129,30 @@ class AlarmReceiver : BroadcastReceiver() {
 
         val pendingIntent = PendingIntent.getBroadcast(context, ID_REPEATING, intent, 0)
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
+
         Toast.makeText(context, "Repeating alarm set up", Toast.LENGTH_SHORT).show()
+    }
+
+    fun cancelAlarm(context: Context, type: String) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java)
+        val requestCode = if (type.equals(TYPE_ONE_TIME, ignoreCase = true)) ID_ONETIME else ID_REPEATING
+        val pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, 0)
+
+        pendingIntent.cancel()
+        alarmManager.cancel(pendingIntent)
+
+        Toast.makeText(context, "Repeating alarm dibatalkan", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isDateInvalid(date: String, format: String): Boolean {
+        return try {
+            val df = SimpleDateFormat(format, Locale.getDefault())
+            df.isLenient = false
+            df.parse(date)
+            false
+        } catch (e: ParseException) {
+            true
+        }
     }
 }
